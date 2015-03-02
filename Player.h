@@ -8,19 +8,24 @@ class Player
 {
 public:
 	Player();
-	void addCard( Card in );
-	void addMatches(std::vector <Card> in);
+
+	int get_numMatches() const;
+	int get_rankAt( int index ) const;
+
 	void printHand();
-	void printMatchPile();
+	void printMatchPile() const;
+	unsigned numCards() const;
+
 	bool playerHasCard( Card test );
+
+	void addCard( Card in );
+	void addMatches( std::vector <Card> in );
+
 	std::vector< Card > cardsOfRank( CARD_RANK targetRank );
-	unsigned numCards();
-	int get_numMatches();
-	int get_rankAt(int index);
+
 private:
 	std::vector< Card > hand;
-	std::vector<std::vector<Card> >matchPile;
-	int matches;
+	std::vector< std::vector<Card> > matchPile;
 };
 
 #endif

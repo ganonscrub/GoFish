@@ -2,11 +2,11 @@
 
 Deck::Deck()
 {
-	for ( int i = 0; i < 4; i++ )
+	for ( int i = 0; i < 13; i++ )
 	{
-		for ( int j = 0; j < 13; j++ )
+		for ( int j = 0; j < 4; j++ )
 		{
-			cards.push_back( Card( static_cast<CARD_SUIT>( SUIT_HEARTS + i ), static_cast<CARD_RANK>( RANK_ACE + j ) ) );
+			cards.push_back( Card( static_cast<CARD_RANK>( RANK_ACE + i ), static_cast<CARD_SUIT>( SUIT_HEARTS + j ) ) );
 		}
 	}
 }
@@ -18,11 +18,7 @@ unsigned Deck::deckSize()
 
 void Deck::printDeck()
 {
-	for ( unsigned i = 0; i < cards.size(); i++ )
-	{
-		cards[i].printCard();
-		std::cout << "\t";
-	}
+	std::cout << "printDeck\n";
 }
 
 void Deck::shuffleDeck()
@@ -38,11 +34,15 @@ void Deck::shuffleDeck()
 
 Card Deck::removeCard()
 {
-	if (deckSize() > 0){
+	if ( deckSize() > 0 )
+	{
 		Card temp = cards.back();
 		cards.pop_back();
 		return temp;
 	}
 	else
-		std::cout << "No more cards in deck!\n";
+	{
+		std::cout << "No more cards in deck\n";
+		return Card( static_cast<CARD_RANK>( -1 ), static_cast<CARD_SUIT>( -1 ) );
+	}
 }
