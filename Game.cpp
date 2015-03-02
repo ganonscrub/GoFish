@@ -2,7 +2,11 @@
 
 Game::Game(unsigned numPlayers) : numPlayers(numPlayers), initialHandSize(7), guesser(0), cardsNotInPlay(0)
 {
-	if ( numPlayers > 5 )
+	if (numPlayers < 2){
+		std::cout << "Too few players, setting it to 2\n\n\n\n";
+		numPlayers = 2;
+	}
+	else if ( numPlayers > 5)
 	{
 		std::cout << "Too many players, setting it to 5\n\n\n\n";
 		numPlayers = 5;
@@ -38,124 +42,123 @@ void Game::printPlayerHands()
 
 void Game::run()
 {
+	system( "mode 90, 40" );
 
 	while (true)
 	{
-		if (deck.deckSize() <= 0 && cardsNotInPlay >= 52)
+		if ( deck.deckSize() <= 0 && cardsNotInPlay >= 52 )
 		{
 			winner();
 			break;
 		}
-		refreshDisplay();
-		if (deck.deckSize() <= 0 && cardsNotInPlay >=52)
-			winner();
-		std::cout << "Currently guessing: Player " << guesser + 1 << "\n\n";
+		gotoxy( 8, 2 );
+		std::cout << "Player " << guesser + 1;
+		if (players[guesser].numCards() == 0){
+			for (int i = 0; i < initialHandSize && deck.deckSize() > 0; i++)
+				players[guesser].addCard(deck.removeCard());
+		}
+		printPlayerHand( guesser );
+		gotoxy(8, 17);
+		std::cout << "Matches";
+		printPlayerMatchPile( guesser );
+		gotoxy(0, 30);
 		guess( guesser );
 		if ( guesser == players.size() - 1 )
 			guesser = 0;
 		else
 			guesser++;
+
+		system( "pause" );
+		system( "cls" );
 	}
 }
 
-void Game::guess(unsigned playerGuessing)
+void Game::guess( unsigned playerGuessing )
 {
-	if (players[playerGuessing].numCards() == 0 && deck.deckSize() > 0)
+	unsigned targetPlayer = -1;
+	char guessRank = 0;
+	while (targetPlayer < 1 || targetPlayer > numPlayers || targetPlayer - 1 == playerGuessing)
 	{
-		for (unsigned i = 0; i < initialHandSize && deck.deckSize() > 0; i++)
-			players[playerGuessing].addCard(deck.removeCard());
-		refreshDisplay();
-		std::cout << "Currently guessing: Player " << guesser + 1 << "\n\n";
+		std::cout << "Target player: ";
+		std::cin >> targetPlayer;
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
 	}
-	else if (players[playerGuessing].numCards() == 0 && deck.deckSize() == 0)
-	{
-		std::cout << "Player " << playerGuessing + 1 << " skipped. No cards in deck or in hand\n";
-		return;
-	}
-	else{
-		unsigned targetPlayer = -1;
-		char guessRank = 0;
-		while (targetPlayer < 1 || targetPlayer > numPlayers || targetPlayer - 1 == playerGuessing)
-		{
-			std::cout << "Target player: ";
-			std::cin >> targetPlayer;
-			std::cin.clear();
-			std::cin.ignore(1000, '\n');
-		}
 
-		while (guessRank < RANK_ACE || guessRank > RANK_KING)
+	while (guessRank < RANK_ACE || guessRank > RANK_KING)
+	{
+		std::cout << "Guess rank: ";
+		std::cin >> guessRank;
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+		switch (guessRank)
 		{
-			std::cout << "Guess rank: ";
-			std::cin >> guessRank;
-			std::cin.clear();
-			std::cin.ignore(1000, '\n');
-			switch (guessRank)
-			{
-			case RANK_ACE:
-			case '1':
-			case 'a':
-			case 'A':
-				guessRank = static_cast<int>(RANK_ACE);
-				break;
-			case RANK_TEN:
-			case 't':
-			case 'T':
-				guessRank = static_cast<int>(RANK_TEN);
-				break;
-			case RANK_JACK:
-			case 'j':
-			case 'J':
-				guessRank = static_cast<int>(RANK_JACK);
-				break;
-			case RANK_QUEEN:
-			case 'q':
-			case 'Q':
-				guessRank = static_cast<int>(RANK_QUEEN);
-				break;
-			case RANK_KING:
-			case 'k':
-			case 'K':
-				guessRank = static_cast<int>(RANK_KING);
-				break;
-			default:
-				guessRank -= '0';
-			}
+		case RANK_ACE:
+		case '1':
+		case 'a':
+		case 'A':
+			guessRank = static_cast<int>(RANK_ACE);
+			break;
+		case RANK_TEN:
+		case 't':
+		case 'T':
+			guessRank = static_cast<int>(RANK_TEN);
+			break;
+		case RANK_JACK:
+		case 'j':
+		case 'J':
+			guessRank = static_cast<int>(RANK_JACK);
+			break;
+		case RANK_QUEEN:
+		case 'q':
+		case 'Q':
+			guessRank = static_cast<int>(RANK_QUEEN);
+			break;
+		case RANK_KING:
+		case 'k':
+		case 'K':
+			guessRank = static_cast<int>(RANK_KING);
+			break;
+		default:
+			guessRank -= '0';
 		}
-		std::vector< Card > temp = players[targetPlayer - 1].cardsOfRank(static_cast<CARD_RANK>(guessRank));
-		if (temp.size() > 0) // if the player had card(s) of that rank
+	}
+
+	std::vector< Card > temp = players[ targetPlayer - 1 ].cardsOfRank(static_cast<CARD_RANK>( guessRank ) );
+	if (temp.size() > 0) // if the player had card(s) of that rank
+	{
+		gotoxy( 70, 9 );
+		std::cout << "Acquired card(s)!";
+		for (unsigned i = 0; i < temp.size(); i++)
+			temp[i].display_card( 70 + i + ( i * 2 ), 10 );
+
+		std::cout << "\n";
+		for (unsigned i = 0; i < temp.size(); i++)
+			players[ playerGuessing ].addCard( temp[ i ] );
+		guesser--;
+		gotoxy( 0, 35 );
+	}
+	else
+	{
+		if ( deck.deckSize() > 0 )
 		{
-			std::cout << "\nFound cards: ";
-			temp[0].printCard();
-			for (unsigned i = 1; i < temp.size(); i++)
-			{
-				std::cout << ", ";
-				temp[i].printCard();
-			}
-			std::cout << "\n";
-			for (unsigned i = 0; i < temp.size(); i++)
-				players[playerGuessing].addCard(temp[i]);
-			guesser--;
+			gotoxy( 0, 34 );
+			std::cout << "\nDid not find any cards. Take one from the pile\n";
+			Card tempCard = deck.removeCard();
+			tempCard.display_card( 70, 10 );
+			gotoxy( 0, 35 );
+			std::cout << std::endl;
+			if (tempCard.get_rank() == static_cast<CARD_RANK> (guessRank))
+				guesser--;
+			players[playerGuessing].addCard(tempCard);
 		}
 		else
-		{
-			if (deck.deckSize() > 0)
-			{
-				std::cout << "\nDid not find any cards. Take one from the pile\n";
-				Card tempCard = deck.removeCard();
-				std::cout << "Card drawn: ";
-				tempCard.printCard();
-				std::cout << std::endl;
-				if (tempCard.getRank() == static_cast<CARD_RANK> (guessRank))
-					guesser--;
-				players[playerGuessing].addCard(tempCard);
-			}
-			else
-				std::cout << "\nNo more cards to draw, continuing...\n";
-		}
-		for (unsigned i = 0; i < players[playerGuessing].numCards(); i++)
-			if (selfCheckHandForMatches(players[playerGuessing].get_rankAt(i), playerGuessing))
-				i = -1;
+			std::cout << "\nNo more cards to draw, continuing...\n";
 	}
+
+	for ( unsigned i = 0; i < players[ playerGuessing ].numCards(); i++ )
+		if ( selfCheckHandForMatches( players[ playerGuessing ].get_rankAt( i ), playerGuessing ) )
+			i = -1;
 }
 void Game::winner()
 {
@@ -197,18 +200,12 @@ bool Game::selfCheckHandForMatches(int guessRank, unsigned player)
 		return false;
 	}
 }
-void Game::refreshDisplay()
+
+void Game::printPlayerHand( unsigned playerNumber )
 {
-	std::cout << "\n--------------------------------------------------------------------------------\n";
-	for (unsigned i = 0; i < players.size(); i++)
-	{
-		std::cout << "Player " << i + 1 << " hand: \t\t";
-		players[i].printHand();
-		std::cout << std::endl;
-		std::cout << "Player " << i + 1 << " match pile: ";
-		players[i].printMatchPile();
-		std::cout << std::endl;
-	}
-	std::cout << "Cards in Deck: " << deck.deckSize() << std::endl;
-	std::cout << "--------------------------------------------------------------------------------\n";
+	players[ playerNumber ].printHand();
+}
+void Game::printPlayerMatchPile(unsigned playerNumber)
+{
+	players[playerNumber].printMatchPile();
 }

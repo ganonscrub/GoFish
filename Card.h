@@ -3,24 +3,16 @@
 
 #include <iostream>
 
-enum CARD_SUIT
-{
-	SUIT_HEARTS = 3,
-	SUIT_DIAMONDS,
-	SUIT_CLUBS,
-	SUIT_SPADES
-};
-
-enum CARD_RANK
-{
-	RANK_ACE = 1,
-	RANK_TWO,
-	RANK_THREE,
-	RANK_FOUR,
-	RANK_FIVE,
-	RANK_SIX,
-	RANK_SEVEN,
-	RANK_EIGHT,
+enum CARD_RANK 
+{ 
+	RANK_ACE = 1, 
+	RANK_TWO, 
+	RANK_THREE, 
+	RANK_FOUR, 
+	RANK_FIVE, 
+	RANK_SIX, 
+	RANK_SEVEN, 
+	RANK_EIGHT, 
 	RANK_NINE,
 	RANK_TEN,
 	RANK_JACK,
@@ -28,25 +20,43 @@ enum CARD_RANK
 	RANK_KING
 };
 
+enum CARD_SUIT 
+{ 
+	SUIT_HEARTS = 3, 
+	SUIT_DIAMONDS, 
+	SUIT_CLUBS, 
+	SUIT_SPADES 
+};
+
+void gotoxy(int x, int y);
+
+const int WIDTH = 12;
+const int HEIGHT = 12;
+
 class Card
 {
 public:
 	Card();
-	Card( CARD_SUIT suit, CARD_RANK rank );
+	Card( CARD_RANK rank, CARD_SUIT suit );
+	void display_card( int x, int y, bool stacked = false, bool face_up = true );
 
-	void printCard();
+	//accessor functions
+	CARD_RANK get_rank() const;
+	CARD_SUIT get_suit() const;
 
-	void setSuit( CARD_SUIT newSuit ) { suit = newSuit; }
-	void setRank( CARD_RANK newRank ) { rank = newRank; }
+	//mutator functions
+	void set_rank( CARD_RANK newRank );
+	void set_suit( CARD_SUIT newSuit );
 
-	CARD_SUIT getSuit() const { return suit; }
-	CARD_RANK getRank() const { return rank; }
-
+	//operators
 	bool operator==( const Card& right );
+	friend std::ostream& operator<<( std::ostream& out, const Card& card );
 
 private:
-	CARD_SUIT suit;
+	void display_stamp(int x, int y);
 	CARD_RANK rank;
+	CARD_SUIT suit;
+
 };
 
 #endif
