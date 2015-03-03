@@ -13,7 +13,8 @@ public:
 	int get_rankAt( int index ) const;
 
 	void printHand();
-	void printMatchPile() const;
+	void printMatchPile();
+
 	unsigned numCards() const;
 
 	bool playerHasCard( Card test );

@@ -15,18 +15,20 @@ int Player::get_rankAt(int index) const
 
 void Player::printHand()
 {
-	for ( int i = 0; i < hand.size(); i++ )
+	for ( unsigned i = 0; i < hand.size(); i++ )
 		hand[i].display_card( i * WIDTH + 8 - (i * 9), 3 );
-}
-
-void Player::printMatchPile() const
-{
-	std::cout << "printMatchPile\n";
 }
 
 unsigned Player::numCards() const
 {
 	return hand.size();
+}
+
+
+void Player::printMatchPile()
+{
+	for (unsigned i = 0; i < matchPile.size(); i++)
+		matchPile[i][0].display_card(i * WIDTH + 8 - (i*7), 18);
 }
 
 bool Player::playerHasCard( Card test ) 

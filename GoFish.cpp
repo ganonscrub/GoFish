@@ -5,10 +5,13 @@
 #include "Game.h"
 
 int main( int argc, char* argv )
-{
+{	
+	int numOfPlayers = 0;
 	srand( (unsigned)time( NULL ) );
-
-	Game game( 5 );
+	std::cout << "Enter the number of players(1-5): ";
+	std::cin >> numOfPlayers;
+	system("cls");
+	Game game( numOfPlayers );
 
 	game.run();
 
