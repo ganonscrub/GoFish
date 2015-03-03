@@ -10,7 +10,7 @@ int main( int argc, char* argv )
 
 	int numOfPlayers = 0;
 
-	//std::cout << "Enter the number of players( 2-5 ): ";
+	std::cout << "Enter the number of players( 2-5 ): ";
 	std::cin >> numOfPlayers;
 
 	system("cls");
