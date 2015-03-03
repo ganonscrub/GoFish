@@ -2,7 +2,12 @@
 
 Game::Game(unsigned numPlayers) : numPlayers(numPlayers), initialHandSize(7), guesser(0), cardsNotInPlay(0)
 {
-	if ( numPlayers > 5 )
+	if (numPlayers < 2)
+	{
+		std::cout << "Too few players, setting it to 2\n\n\n\n";
+		numPlayers = 2;
+	}
+	else if ( numPlayers > 5)
 	{
 		std::cout << "Too many players, setting it to 5\n\n\n\n";
 		numPlayers = 5;
@@ -38,7 +43,8 @@ void Game::printPlayerHands()
 
 void Game::run()
 {
-	system( "mode 100,35" );
+
+	system( "mode 90, 40" );
 
 	while (true)
 	{
@@ -55,6 +61,17 @@ void Game::run()
 		std::cout << "Player " << guesser + 1;
 		printPlayerHand( guesser );
 		gotoxy( 0, 21 );
+		gotoxy( 8, 2 );
+		std::cout << "Player " << guesser + 1;
+		if (players[guesser].numCards() == 0){
+			for ( unsigned i = 0; i < initialHandSize && deck.deckSize() > 0; i++ )
+				players[ guesser ].addCard( deck.removeCard() );
+		}
+		printPlayerHand( guesser );
+		gotoxy(8, 17);
+		std::cout << "Matches";
+		printPlayerMatchPile( guesser );
+		gotoxy(0, 30);
 		guess( guesser );
 		if ( guesser == players.size() - 1 )
 			guesser = 0;
@@ -129,17 +146,20 @@ void Game::guess( unsigned playerGuessing )
 		for (unsigned i = 0; i < temp.size(); i++)
 			players[ playerGuessing ].addCard( temp[ i ] );
 		guesser--;
-		gotoxy( 0, 21 );
+
+		gotoxy( 0, 35 );
+
 	}
 	else
 	{
 		if ( deck.deckSize() > 0 )
 		{
-			gotoxy( 0, 21 );
+			gotoxy( 0, 34 );
 			std::cout << "\nDid not find any cards. Take one from the pile\n";
 			Card tempCard = deck.removeCard();
 			tempCard.display_card( 70, 10 );
-			gotoxy( 0, 21 );
+			gotoxy( 0, 35 );
+
 			std::cout << std::endl;
 			if (tempCard.get_rank() == static_cast<CARD_RANK> (guessRank))
 				guesser--;
@@ -197,4 +217,10 @@ bool Game::selfCheckHandForMatches(int guessRank, unsigned player)
 void Game::printPlayerHand( unsigned playerNumber )
 {
 	players[ playerNumber ].printHand();
+
+}
+
+void Game::printPlayerMatchPile(unsigned playerNumber)
+{
+	players[playerNumber].printMatchPile();
 }

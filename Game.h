@@ -19,6 +19,7 @@ public:
 	void winner();
 	bool selfCheckHandForMatches( int guessRank, unsigned player );
 
+	void printPlayerMatchPile(unsigned playerNumber);
 	void printPlayerHand( unsigned playerNumber );
 
 private:
