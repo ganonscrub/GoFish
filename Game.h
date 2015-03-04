@@ -12,13 +12,10 @@ public:
 	Game( unsigned numPlayers );
 	void dealCards();
 	std::vector< Player >& getPlayers() { return players; }
-	void printDeck();
-	void printPlayerHands();
+	//void printPlayerHands(); Used to print all player hands for testing
 	void run();
 	void guess( unsigned playerGuessing );
 	void winner();
-	bool selfCheckHandForMatches( int guessRank, unsigned player );
-
 	void printPlayerMatchPile(unsigned playerNumber);
 	void printPlayerHand( unsigned playerNumber );
 

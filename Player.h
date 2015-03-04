@@ -18,6 +18,7 @@ public:
 	unsigned numCards() const;
 
 	bool playerHasCard( Card test );
+	int checkHandForMatches();
 
 	void addCard( Card in );
 	void addMatches( std::vector <Card> in );

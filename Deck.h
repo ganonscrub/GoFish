@@ -9,7 +9,6 @@ class Deck
 public:
 	Deck();
 	unsigned deckSize();
-	void printDeck();
 	void shuffleDeck();
 	Card removeCard();
 

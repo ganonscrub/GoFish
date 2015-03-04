@@ -15,12 +15,6 @@ unsigned Deck::deckSize()
 {
 	return cards.size();
 }
-
-void Deck::printDeck()
-{
-	std::cout << "printDeck\n";
-}
-
 void Deck::shuffleDeck()
 {
 	for ( unsigned i = 0; i < 1000; i++ )
