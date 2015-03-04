@@ -1,4 +1,4 @@
-#include "Game.h"
+ #include "Game.h"
 
 Game::Game(unsigned numPlayers) : numPlayers(numPlayers), initialHandSize(7), guesser(0), cardsNotInPlay(0)
 {
@@ -18,20 +18,20 @@ Game::Game(unsigned numPlayers) : numPlayers(numPlayers), initialHandSize(7), gu
 	for ( unsigned i = 0; i < numPlayers; i++ )
 	{
 		Player newPlayer;
-		for ( unsigned j = 0; j < initialHandSize; j++ )
-		{
-			newPlayer.addCard( deck.removeCard() );
-		}
 		players.push_back( newPlayer );
+	}
+	dealCards();
+}
+void Game::dealCards()
+{
+	for (unsigned i = 0; i < initialHandSize; i++)
+	{
+		for (unsigned j = 0; j < numPlayers; j++)
+			players[j].addCard(deck.removeCard());
 	}
 }
 
-void Game::printDeck()
-{
-	deck.printDeck();
-}
-
-void Game::printPlayerHands()
+/*void Game::printPlayerHands()
 {
 	for ( unsigned i = 0; i < numPlayers; i++ )
 	{
@@ -39,24 +39,15 @@ void Game::printPlayerHands()
 		players[i].printHand();
 		std::cout << "\n";
 	}
-}
+} Used to print all player hands for testing*/
 
 void Game::run()
 {
 
 	system( "mode 90, 40" );
 
-	while (true)
+	while (cardsNotInPlay < 52)
 	{
-		if ( deck.deckSize() <= 0 && cardsNotInPlay >= 52 )
-		{
-			winner();
-			break;
-		}
-		 
-		if ( deck.deckSize() <= 0 && cardsNotInPlay >= 52 )
-			winner();
-
 		gotoxy( 8, 2 );
 		std::cout << "Player " << guesser + 1;
 		printPlayerHand( guesser );
@@ -81,6 +72,7 @@ void Game::run()
 		system( "pause" );
 		system( "cls" );
 	}
+	winner();
 }
 
 void Game::guess( unsigned playerGuessing )
@@ -168,10 +160,8 @@ void Game::guess( unsigned playerGuessing )
 		else
 			std::cout << "\nNo more cards to draw, continuing...\n";
 	}
+	cardsNotInPlay += (players[playerGuessing].checkHandForMatches() * 4); //finds matches and increments cardsNotInPlay
 
-	for ( unsigned i = 0; i < players[ playerGuessing ].numCards(); i++ )
-		if ( selfCheckHandForMatches( players[ playerGuessing ].get_rankAt( i ), playerGuessing ) )
-			i = -1;
 }
 void Game::winner()
 {
@@ -195,23 +185,6 @@ void Game::winner()
 		winner.pop_back();
 	}
 	std::cout << std::endl;
-}
-bool Game::selfCheckHandForMatches(int guessRank, unsigned player)
-{
-	std::vector< Card> temp = players[player].cardsOfRank(static_cast<CARD_RANK> (guessRank));
-	if (temp.size() == 4)
-	{
-		players[player].addMatches(temp);
-		temp.clear();
-		cardsNotInPlay += 4;
-		return true;
-	}
-	else
-	{
-		for (unsigned i = 0; i < temp.size(); i++)
-			players[player].addCard(temp[i]);
-		return false;
-	}
 }
 
 void Game::printPlayerHand( unsigned playerNumber )

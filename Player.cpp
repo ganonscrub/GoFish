@@ -64,3 +64,23 @@ std::vector< Card > Player::cardsOfRank( CARD_RANK targetRank )
 	}
 	return temp;
 }
+int Player::checkHandForMatches()
+{	
+	int initialNumberOfMatches = matchPile.size();
+	for (unsigned i = 0; i < numCards(); i++)
+	{
+		std::vector< Card> temp = cardsOfRank(static_cast<CARD_RANK>(get_rankAt(i)));
+		if (temp.size() == 4)
+		{
+			addMatches(temp);
+			temp.clear();
+			i = -1;			
+		}
+		else
+		{
+			for (unsigned i = 0; i < temp.size(); i++)
+				addCard(temp[i]);
+		}
+	}
+	return matchPile.size() - initialNumberOfMatches;
+}
