@@ -13,10 +13,28 @@ int Player::get_rankAt(int index) const
 	return hand[index].get_rank();
 }
 
-void Player::printHand()
+void Player::printHand() const
 {
 	for ( unsigned i = 0; i < hand.size(); i++ )
-		hand[i].display_card( i * WIDTH + 8 - (i * 9), 3 );
+		hand[i].display_card( i * WIDTH + 8 - ( i * 9 ), 3 );
+}
+
+void Player::printHand( unsigned posX, unsigned posY ) const
+{
+	for ( unsigned i = 0; i < hand.size(); i++ )
+		hand[i].display_card( i * WIDTH + posX - ( i * 9 ), posY );
+}
+
+void Player::printMatchPile() const
+{
+	for (unsigned i = 0; i < matchPile.size(); i++)
+		matchPile[i][0].display_card( i * WIDTH + 8 - ( i * 7 ), 18 );
+}
+
+void Player::printMatchPile( unsigned posX, unsigned posY ) const
+{
+	for (unsigned i = 0; i < matchPile.size(); i++)
+		matchPile[i][0].display_card( i * WIDTH + posX - ( i * 7 ), posY );
 }
 
 unsigned Player::numCards() const
@@ -24,14 +42,7 @@ unsigned Player::numCards() const
 	return hand.size();
 }
 
-
-void Player::printMatchPile()
-{
-	for (unsigned i = 0; i < matchPile.size(); i++)
-		matchPile[i][0].display_card(i * WIDTH + 8 - (i*7), 18);
-}
-
-bool Player::playerHasCard( Card test ) 
+bool Player::playerHasCard( Card test )  const
 {
 	for ( unsigned i = 0; i < hand.size(); i++ )
 	{
@@ -45,7 +56,8 @@ void Player::addCard( Card in )
 {
 	hand.push_back( in );
 }
-void Player::addMatches(std::vector<Card> in)
+
+void Player::addMatches( std::vector<Card> in )
 {
 	matchPile.push_back(in);
 }
@@ -64,23 +76,46 @@ std::vector< Card > Player::cardsOfRank( CARD_RANK targetRank )
 	}
 	return temp;
 }
+
 int Player::checkHandForMatches()
 {	
 	int initialNumberOfMatches = matchPile.size();
-	for (unsigned i = 0; i < numCards(); i++)
+	for ( unsigned i = 0; i < numCards(); i++ )
 	{
-		std::vector< Card> temp = cardsOfRank(static_cast<CARD_RANK>(get_rankAt(i)));
-		if (temp.size() == 4)
+		std::vector< Card > temp = cardsOfRank( static_cast<CARD_RANK>( get_rankAt( i ) ) );
+		if ( temp.size() == 4 )
 		{
-			addMatches(temp);
+			addMatches( temp );
 			temp.clear();
 			i = -1;			
 		}
 		else
 		{
-			for (unsigned i = 0; i < temp.size(); i++)
-				addCard(temp[i]);
+			for ( unsigned i = 0; i < temp.size(); i++ )
+				addCard( temp[ i ] );
 		}
 	}
 	return matchPile.size() - initialNumberOfMatches;
+}
+
+bool Player::handSorted() const
+{
+	if ( hand.size() > 1 )
+	{
+		for ( unsigned i = 0; i < hand.size() - 1; i++ )
+			if ( hand[ i + 1 ] < hand[ i ] )
+				return false;
+	}
+
+	return true;
+}
+
+void Player::sortHand()
+{
+	while ( !handSorted() )
+	{
+		for ( unsigned i = 0; i < hand.size() - 1; i++ )
+			if ( hand[ i + 1 ] < hand[ i ] )
+				std::swap( hand[ i + 1 ], hand[ i ] );
+	}
 }

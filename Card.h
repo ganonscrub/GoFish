@@ -38,7 +38,7 @@ class Card
 public:
 	Card();
 	Card( CARD_RANK rank, CARD_SUIT suit );
-	void display_card( int x, int y, bool stacked = false, bool face_up = true );
+	void display_card( int x, int y, bool stacked = false, bool face_up = true ) const;
 
 	//accessor functions
 	CARD_RANK get_rank() const;
@@ -49,11 +49,12 @@ public:
 	void set_suit( CARD_SUIT newSuit );
 
 	//operators
-	bool operator==( const Card& right );
+	bool operator==( const Card& right ) const;
+	bool operator<( const Card& right ) const; // only cares about rank
 	friend std::ostream& operator<<( std::ostream& out, const Card& card );
 
 private:
-	void display_stamp(int x, int y);
+	void display_stamp(int x, int y) const;
 	CARD_RANK rank;
 	CARD_SUIT suit;
 

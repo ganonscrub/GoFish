@@ -12,22 +12,29 @@ public:
 	int get_numMatches() const;
 	int get_rankAt( int index ) const;
 
-	void printHand();
-	void printMatchPile();
+	void printHand() const;
+	void printHand( unsigned posX, unsigned posY ) const;
+
+	void printMatchPile() const;
+	void printMatchPile( unsigned posX, unsigned posY ) const;
 
 	unsigned numCards() const;
 
-	bool playerHasCard( Card test );
+	bool playerHasCard( Card test ) const;
 	int checkHandForMatches();
 
 	void addCard( Card in );
 	void addMatches( std::vector <Card> in );
+
+	void sortHand();
 
 	std::vector< Card > cardsOfRank( CARD_RANK targetRank );
 
 private:
 	std::vector< Card > hand;
 	std::vector< std::vector<Card> > matchPile;
+
+	bool handSorted() const;
 };
 
 #endif

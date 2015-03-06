@@ -47,9 +47,14 @@ void Card::set_suit( CARD_SUIT newSuit )
 	suit = newSuit;
 }
 
-bool Card::operator==( const Card& right )
+bool Card::operator==( const Card& right ) const
 {
 	return ( suit == right.suit && rank == right.rank );
+}
+
+bool Card::operator<( const Card& right ) const // only cares about rank
+{
+	return static_cast<int>(rank) < static_cast<int>(right.rank);
 }
 
 ostream& operator<<(ostream& out, const Card& card)
@@ -97,7 +102,7 @@ ostream& operator<<(ostream& out, const Card& card)
 	return out;
 }
 
-void Card::display_card( int x, int y, bool stacked, bool face_up )
+void Card::display_card( int x, int y, bool stacked, bool face_up ) const
 {
 
 	const char UPPER_LEFT = (const char)218;
@@ -200,7 +205,7 @@ void Card::display_card( int x, int y, bool stacked, bool face_up )
 	display_stamp( x, y );
 }
 
-void Card::display_stamp(int x, int y)
+void Card::display_stamp(int x, int y) const
 {
 
 	switch( suit )
