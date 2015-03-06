@@ -41,7 +41,7 @@ void Game::run()
 			for ( unsigned i = 0; i < initialHandSize && deck.deckSize() > 0; i++ )
 			{
 				players[ guesser ].addCard( deck.removeCard() );
-				players[ guesser ].sortHand();
+				players[guesser].sortHand();
 			}
 		}
 		printPlayerHand( guesser );
@@ -151,7 +151,6 @@ void Game::guess( unsigned playerGuessing )
 		std::cout << "\n";
 		for ( unsigned i = 0; i < temp.size(); i++ )
 			players[ playerGuessing ].addCard( temp[ i ] );
-		players[ playerGuessing ].sortHand();
 
 		guesser--;
 
@@ -182,6 +181,7 @@ void Game::guess( unsigned playerGuessing )
 	}
 
 	cardsNotInPlay += ( players[ playerGuessing ].checkHandForMatches() * 4 ); //finds matches and increments cardsNotInPlay
+	players[playerGuessing].sortHand();
 }
 
 void Game::winner()
