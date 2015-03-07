@@ -27,13 +27,13 @@ void Player::printHand( unsigned posX, unsigned posY ) const
 
 void Player::printMatchPile() const
 {
-	for (unsigned i = 0; i < matchPile.size(); i++)
+	for ( unsigned i = 0; i < matchPile.size(); i++ )
 		matchPile[i][0].display_card( i * WIDTH + 8 - ( i * 7 ), 18 );
 }
 
 void Player::printMatchPile( unsigned posX, unsigned posY ) const
 {
-	for (unsigned i = 0; i < matchPile.size(); i++)
+	for ( unsigned i = 0; i < matchPile.size(); i++ )
 		matchPile[i][0].display_card( i * WIDTH + posX - ( i * 7 ), posY );
 }
 
@@ -59,7 +59,7 @@ void Player::addCard( Card in )
 
 void Player::addMatches( std::vector<Card> in )
 {
-	matchPile.push_back(in);
+	matchPile.push_back( in );
 }
 
 std::vector< Card > Player::cardsOfRank( CARD_RANK targetRank )
@@ -92,7 +92,7 @@ int Player::checkHandForMatches()
 		else
 		{
 			for ( unsigned i = 0; i < temp.size(); i++ )
-				addCard( temp[ i ] );
+				addCard( temp[i] );
 		}
 	}
 	return matchPile.size() - initialNumberOfMatches;
@@ -103,7 +103,7 @@ bool Player::handSorted() const
 	if ( hand.size() > 1 )
 	{
 		for ( unsigned i = 0; i < hand.size() - 1; i++ )
-			if ( hand[ i + 1 ] < hand[ i ] )
+			if ( hand[ i + 1 ] < hand[i] )
 				return false;
 	}
 

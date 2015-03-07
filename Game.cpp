@@ -25,8 +25,8 @@ void Game::dealCards()
 	for (unsigned i = 0; i < numPlayers; i++)
 	{
 		for (unsigned j = 0; j < initialHandSize; j++)
-			players[ i ].addCard( deck.removeCard() );
-		players[ i ].sortHand(); // sort after adding the cards, should be a better way to optimize
+			players[i].addCard( deck.removeCard() );
+		players[i].sortHand(); // sort after adding the cards, should be a better way to optimize
 	}
 }
 
@@ -36,13 +36,13 @@ void Game::run()
 	{
 		gotoxy( playerLabelX, playerLabelY );
 		std::cout << "Currently guessing: Player " << guesser + 1;
-		if ( players[ guesser ].numCards() == 0 )
+		if ( players[guesser].numCards() == 0 )
 		{
 			for ( unsigned i = 0; i < initialHandSize && deck.deckSize() > 0; i++ )
 			{
-				players[ guesser ].addCard( deck.removeCard() );
-				players[guesser].sortHand();
+				players[guesser].addCard( deck.removeCard() );
 			}
+			players[guesser].sortHand();
 		}
 		printPlayerHand( guesser );
 
@@ -77,12 +77,12 @@ void Game::printPlayerHands()
 
 void Game::printPlayerMatchPile( unsigned playerNumber ) const
 {
-	players[ playerNumber ].printMatchPile( playerMatchX, playerMatchY );
+	players[playerNumber].printMatchPile( playerMatchX, playerMatchY );
 }
 
 void Game::printPlayerHand( unsigned playerNumber ) const
 {
-	players[ playerNumber ].printHand( playerHandX, playerHandY );
+	players[playerNumber].printHand( playerHandX, playerHandY );
 }
 
 void Game::guess( unsigned playerGuessing )
@@ -150,7 +150,7 @@ void Game::guess( unsigned playerGuessing )
 
 		std::cout << "\n";
 		for ( unsigned i = 0; i < temp.size(); i++ )
-			players[ playerGuessing ].addCard( temp[ i ] );
+			players[playerGuessing].addCard( temp[ i ] );
 
 		guesser--;
 
@@ -169,8 +169,7 @@ void Game::guess( unsigned playerGuessing )
 			if ( tempCard.get_rank() == static_cast<CARD_RANK> (guessRank) )
 				guesser--;
 
-			players[ playerGuessing ].addCard( tempCard );
-			players[ playerGuessing ].sortHand();
+			players[playerGuessing].addCard( tempCard );
 			tempCard.display_card( acquiredCardX, acquiredCardY );
 		}
 		else
@@ -180,7 +179,7 @@ void Game::guess( unsigned playerGuessing )
 		}
 	}
 
-	cardsNotInPlay += ( players[ playerGuessing ].checkHandForMatches() * 4 ); //finds matches and increments cardsNotInPlay
+	cardsNotInPlay += ( players[playerGuessing].checkHandForMatches() * 4 ); //finds matches and increments cardsNotInPlay
 	players[playerGuessing].sortHand();
 }
 

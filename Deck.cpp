@@ -20,9 +20,9 @@ void Deck::shuffleDeck()
 	for ( unsigned i = 0; i < 1000; i++ )
 	{
 		int randPlace1 = rand() % 52, randPlace2 = rand() % 52;
-		Card temp = cards[ randPlace1 ];
-		cards[ randPlace1 ] = cards[ randPlace2 ];
-		cards[ randPlace2 ] = temp;
+		Card temp = cards[randPlace1];
+		cards[randPlace1] = cards[randPlace2];
+		cards[randPlace2] = temp;
 	}
 }
 

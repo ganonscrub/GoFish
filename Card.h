@@ -57,7 +57,6 @@ private:
 	void display_stamp(int x, int y) const;
 	CARD_RANK rank;
 	CARD_SUIT suit;
-
 };
 
 #endif
