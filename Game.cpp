@@ -35,6 +35,8 @@ void Game::run()
 	while ( cardsNotInPlay < 52 )
 	{
 		gotoxy( playerLabelX, playerLabelY );
+		if (players[guesser].numCards() == 0 && deck.deckSize() <= 0) //skips player if no more cards in hand & no cards in deck
+			guesser++;
 		std::cout << "Currently guessing: Player " << guesser + 1;
 		if ( players[guesser].numCards() == 0 )
 		{
