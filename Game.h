@@ -10,10 +10,10 @@ const unsigned playerLabelX = 5; // text displaying current player number
 const unsigned playerLabelY = 3;
 
 const unsigned playerHandX = playerLabelX; // where to start drawing current player's hand
-const unsigned playerHandY = playerLabelY + 2;
+const unsigned playerHandY = playerLabelY + 3;
 
 const unsigned playerMatchX = playerLabelX; // where to start drawing current player's matches
-const unsigned playerMatchY = playerLabelY + 17;
+const unsigned playerMatchY = playerLabelY + 18;
 
 const unsigned acquiredCardX = playerMatchX + 70; // where to start drawing cards drawn from deck/taken from players
 const unsigned acquiredCardY = playerMatchY;
@@ -38,6 +38,7 @@ private:
 	unsigned guesser;
 
 	void dealCards();
+	void dbg_dealCards();
 	std::vector< Player >& getPlayers() { return players; }
 	
 	void printPlayerHands(); //Used to print all player hands for testing

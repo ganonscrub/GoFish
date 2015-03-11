@@ -19,6 +19,7 @@ Game::Game( unsigned numPlayers ) : numPlayers( numPlayers ), initialHandSize( 7
 		players.push_back( Player() );
 
 	dealCards();
+	//dbg_dealCards();
 }
 void Game::dealCards()
 {
@@ -30,12 +31,25 @@ void Game::dealCards()
 	}
 }
 
+void Game::dbg_dealCards()
+{
+	for (unsigned i = 0; i < numPlayers; i++)
+	{
+		for (unsigned j = 0; j < 13; j++)
+		{
+			players[i].addCard( Card( static_cast<CARD_RANK>( j + 1 ), static_cast<CARD_SUIT>( i ) ) );
+			deck.removeCard();
+		}
+		players[i].sortHand();
+	}
+}
+
 void Game::run()
 {
 	while ( cardsNotInPlay < 52 )
 	{
 		// skip player if no more cards in hand & no cards in deck
-		if ( players[guesser].numCards() == 0 && deck.deckSize() <= 0 )
+		while ( players[guesser].numCards() == 0 && deck.deckSize() <= 0 && cardsNotInPlay < 52 )
 		{
 			if ( guesser == players.size() - 1 )
 				guesser = 0;
@@ -45,6 +59,9 @@ void Game::run()
 
 		gotoxy( playerLabelX, playerLabelY );
 		std::cout << "Currently guessing: Player " << guesser + 1;
+
+		gotoxy( playerLabelX, playerLabelY + 2 );
+		std::cout << "Player " << guesser + 1 << " Hand";
 
 		// if current guesser has no cards, give guesser a card from the deck
 		if ( players[guesser].numCards() == 0 )
@@ -67,7 +84,9 @@ void Game::run()
 		else
 			guesser++;
 
-		gotoxy( 0, guessRankY + 2 );
+		gotoxy( guessRankX, guessRankY + 1 );
+		std::cout << "                                                                           ";
+		gotoxy( guessRankX, guessRankY + 1 );
 
 		system( "pause" );
 		system( "cls" );
@@ -112,7 +131,12 @@ void Game::guess( unsigned playerGuessing )
 	while ( guessRank < RANK_ACE || guessRank > RANK_KING )
 	{
 		gotoxy( guessRankX, guessRankY );
+
 		std::cout << "Guess rank: ";
+		gotoxy( guessRankX + 12, guessRankY );
+		std::cout << "   ";
+		gotoxy( guessRankX + 12, guessRankY );
+
 		std::cin >> guessRank;
 		std::cin.clear();
 		std::cin.ignore( 1000, '\n' );
@@ -146,12 +170,16 @@ void Game::guess( unsigned playerGuessing )
 			guessRank = static_cast<int>(RANK_KING);
 			break;
 		default:
-			guessRank -= '0';
-			std::cout << "guessRank: " << (int)guessRank << "\n";
+			if ( guessRank >= '1' && guessRank <= '9' )
+				guessRank -= '0';
 		}
 
-		if ( !players[guesser].playerHasCardOfRank( static_cast<CARD_RANK>(guessRank) ) )
+		if ( !players[playerGuessing].playerHasCardOfRank( static_cast<CARD_RANK>(guessRank) ) )
+		{
+			gotoxy( guessRankX, guessRankY + 1 );
+			std::cout << "No card of that rank in your hand, cheater!\n";
 			guessRank = 0;
+		}
 	}
 
 	std::vector< Card > temp = players[ targetPlayer - 1 ].cardsOfRank( static_cast<CARD_RANK>( guessRank ) );

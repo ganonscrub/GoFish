@@ -28,13 +28,13 @@ void Player::printHand( unsigned posX, unsigned posY ) const
 void Player::printMatchPile() const
 {
 	for ( unsigned i = 0; i < matchPile.size(); i++ )
-		matchPile[i][0].display_card( i * WIDTH + 8 - ( i * 7 ), 18 );
+		matchPile[i][0].display_card( i * WIDTH + 8 - ( i * 10 ), 18 );
 }
 
 void Player::printMatchPile( unsigned posX, unsigned posY ) const
 {
 	for ( unsigned i = 0; i < matchPile.size(); i++ )
-		matchPile[i][0].display_card( i * WIDTH + posX - ( i * 7 ), posY );
+		matchPile[i][0].display_card( i * WIDTH + posX - ( i * 10 ), posY );
 }
 
 unsigned Player::numCards() const
