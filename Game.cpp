@@ -286,14 +286,13 @@ void Game::computerGuess( unsigned playerNumber )
 		if ( deck.deckSize() > 0 )
 		{
 			gotoxy( acquiredCardX - 5, acquiredCardY - 1 );
-			std::cout << "Take one from the pile:";
+			std::cout << "Took from the pile";
 			Card tempCard = deck.removeCard();
 
 			if ( tempCard.get_rank() == static_cast<CARD_RANK> (randRank) )
 				guesser--;
 
 			players[playerNumber].addCard( tempCard );
-			tempCard.display_card( acquiredCardX, acquiredCardY );
 		}
 		else
 		{
