@@ -7,7 +7,7 @@
 class Player
 {
 public:
-	Player();
+	Player( bool isAI = false );
 
 	int get_numMatches() const;
 	int get_rankAt( int index ) const;
@@ -30,11 +30,16 @@ public:
 
 	std::vector< Card > cardsOfRank( CARD_RANK targetRank );
 
+	Card cardAt( unsigned index ) const;
+
+	bool isAI() const;
+
 private:
 	std::vector< Card > hand;
 	std::vector< std::vector<Card> > matchPile;
 
 	bool handSorted() const;
+	const bool AIPlayer;
 };
 
 #endif

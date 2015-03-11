@@ -24,10 +24,16 @@ const unsigned targetPlayerY = playerMatchY + 17;
 const unsigned guessRankX = targetPlayerX; // where to start drawing "Guess rank: " prompt
 const unsigned guessRankY = targetPlayerY + 1;
 
+const unsigned cardsLeftInPlayX = 98;
+const unsigned cardsLeftInPlayY = playerLabelY;
+
+const unsigned winnersX = 50;
+const unsigned winnersY = 20;
+
 class Game
 {
 public:
-	Game( unsigned numPlayers );
+	Game( unsigned numPlayers, bool hasAI = false );
 
 	void run();
 
@@ -35,17 +41,19 @@ private:
 	Deck deck;
 	std::vector< Player > players;
 
+	const bool hasAI;
+
 	unsigned guesser;
 
 	void dealCards();
-	void dbg_dealCards();
-	std::vector< Player >& getPlayers() { return players; }
+	std::vector< Player >& getPlayers();
 	
 	void printPlayerHands(); //Used to print all player hands for testing
 	void printPlayerMatchPile(unsigned playerNumber ) const;
 	void printPlayerHand( unsigned playerNumber ) const;
 
 	void guess( unsigned playerNumber );
+	void computerGuess( unsigned playerNumber );
 	void winner();
 
 	unsigned numPlayers;

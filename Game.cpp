@@ -1,6 +1,6 @@
  #include "Game.h"
 
-Game::Game( unsigned numPlayers ) : numPlayers( numPlayers ), initialHandSize( 7 ), guesser( 0 ), cardsNotInPlay( 0 )
+Game::Game( unsigned numPlayers, bool hasAI ) : numPlayers( numPlayers ), hasAI( hasAI ), initialHandSize( 7 ), guesser( 0 ), cardsNotInPlay( 0 )
 {
 	if ( numPlayers < 2 )
 	{
@@ -10,16 +10,28 @@ Game::Game( unsigned numPlayers ) : numPlayers( numPlayers ), initialHandSize( 7
 	else if ( numPlayers > 5 )
 	{
 		std::cout << "Too many players, setting it to 5\n\n\n\n";
-		Game::numPlayers = 2;
+		Game::numPlayers = 5;
 	}
 
 	deck.shuffleDeck();
 
-	for ( unsigned i = 0; i < numPlayers; i++ )
-		players.push_back( Player() );
+	if ( hasAI )
+	{
+		for ( unsigned i = 0; i < numPlayers; i++ )
+		{
+			if ( i == 0 )
+				players.push_back( Player() );
+			else
+				players.push_back( Player( true ) );
+		}
+	}
+	else
+	{
+		for ( unsigned i = 0; i < numPlayers; i++ )
+			players.push_back( Player() );
+	}
 
 	dealCards();
-	//dbg_dealCards();
 }
 void Game::dealCards()
 {
@@ -31,17 +43,9 @@ void Game::dealCards()
 	}
 }
 
-void Game::dbg_dealCards()
+std::vector< Player >& Game::getPlayers()
 {
-	for (unsigned i = 0; i < numPlayers; i++)
-	{
-		for (unsigned j = 0; j < 13; j++)
-		{
-			players[i].addCard( Card( static_cast<CARD_RANK>( j + 1 ), static_cast<CARD_SUIT>( i ) ) );
-			deck.removeCard();
-		}
-		players[i].sortHand();
-	}
+	return players;
 }
 
 void Game::run()
@@ -51,17 +55,30 @@ void Game::run()
 		// skip player if no more cards in hand & no cards in deck
 		while ( players[guesser].numCards() == 0 && deck.deckSize() <= 0 && cardsNotInPlay < 52 )
 		{
+			gotoxy( playerLabelX, playerLabelY );
+			std::cout << "Skipping Player " << guesser + 1 << " due to an empty hand and an empty deck";
+
 			if ( guesser == players.size() - 1 )
 				guesser = 0;
 			else
 				guesser++;
+
+			gotoxy( guessRankX, guessRankY + 1 );
+			system( "pause" );
 		}
 
 		gotoxy( playerLabelX, playerLabelY );
-		std::cout << "Currently guessing: Player " << guesser + 1;
+		std::cout << "                                                                      ";
+		gotoxy( playerLabelX, playerLabelY );
+		std::cout << "Currently guessing: Player " << guesser + 1 << " out of " << numPlayers << " players";
+		gotoxy( cardsLeftInPlayX, cardsLeftInPlayY );
+		std::cout << "Cards in play: " << 52 - cardsNotInPlay;
 
-		gotoxy( playerLabelX, playerLabelY + 2 );
-		std::cout << "Player " << guesser + 1 << " Hand";
+		if ( !players[guesser].isAI() )
+		{
+			gotoxy( playerLabelX, playerLabelY + 2 );
+			std::cout << "Player " << guesser + 1 << " Hand";
+		}
 
 		// if current guesser has no cards, give guesser a card from the deck
 		if ( players[guesser].numCards() == 0 )
@@ -72,13 +89,19 @@ void Game::run()
 			}
 			players[guesser].sortHand();
 		}
-		printPlayerHand( guesser );
+
+		if ( !players[guesser].isAI() )
+			printPlayerHand( guesser );
 
 		gotoxy( playerMatchX, playerMatchY - 1 );
 		std::cout << "Player " << guesser + 1 << " matched cards:";
 		printPlayerMatchPile( guesser );
 
-		guess( guesser );
+		if ( players[guesser].isAI() )
+			computerGuess( guesser );
+		else
+			guess( guesser );
+
 		if ( guesser == players.size() - 1 )
 			guesser = 0;
 		else
@@ -202,10 +225,11 @@ void Game::guess( unsigned playerGuessing )
 	}
 	else
 	{
+		gotoxy( acquiredCardX - 10, acquiredCardY - 2 );
+		std::cout << "Player " << targetPlayer << " had no cards of that rank.";
+
 		if ( deck.deckSize() > 0 )
 		{
-			gotoxy( acquiredCardX - 10, acquiredCardY - 2 );
-			std::cout << "Player " << targetPlayer << " had no cards of that rank.";
 			gotoxy( acquiredCardX - 5, acquiredCardY - 1 );
 			std::cout << "Take one from the pile:";
 			Card tempCard = deck.removeCard();
@@ -218,13 +242,68 @@ void Game::guess( unsigned playerGuessing )
 		}
 		else
 		{
-			gotoxy( acquiredCardX, acquiredCardY - 1 );
+			gotoxy( acquiredCardX - 10, acquiredCardY - 1 );
 			std::cout << "No more cards to draw, continuing...";
 		}
 	}
 
 	cardsNotInPlay += ( players[playerGuessing].checkHandForMatches() * 4 ); //finds matches and increments cardsNotInPlay
 	players[playerGuessing].sortHand();
+}
+
+void Game::computerGuess( unsigned playerNumber )
+{
+	unsigned randPlayer = -1;
+	while ( randPlayer < 0 || randPlayer > numPlayers - 1 || randPlayer == playerNumber )
+		randPlayer = rand() % numPlayers;
+
+	Card randCard = players[playerNumber].cardAt( rand() % players[playerNumber].numCards() );
+	CARD_RANK randRank = randCard.get_rank();
+
+	std::vector< Card > temp = players[randPlayer].cardsOfRank( randRank );
+	if ( temp.size() > 0 )
+	{
+		players[randPlayer].sortHand(); // sort hand of player who just lost cards
+
+		gotoxy( acquiredCardX, acquiredCardY - 1 );
+		std::cout << "Acquired card(s)!";
+		for ( unsigned i = 0; i < temp.size(); i++ )
+			temp[i].display_card( acquiredCardX + i + ( i * 2 ), acquiredCardY );
+
+		std::cout << "\n";
+		for ( unsigned i = 0; i < temp.size(); i++ )
+			players[playerNumber].addCard( temp[ i ] );
+
+		guesser--;
+
+		gotoxy( 0, 35 );
+	}
+	else
+	{
+		gotoxy( acquiredCardX - 10, acquiredCardY - 2 );
+		std::cout << "Player " << randPlayer + 1 << " had no cards of that rank.";
+
+		if ( deck.deckSize() > 0 )
+		{
+			gotoxy( acquiredCardX - 5, acquiredCardY - 1 );
+			std::cout << "Take one from the pile:";
+			Card tempCard = deck.removeCard();
+
+			if ( tempCard.get_rank() == static_cast<CARD_RANK> (randRank) )
+				guesser--;
+
+			players[playerNumber].addCard( tempCard );
+			tempCard.display_card( acquiredCardX, acquiredCardY );
+		}
+		else
+		{
+			gotoxy( acquiredCardX - 10, acquiredCardY - 1 );
+			std::cout << "No more cards to draw, continuing...";
+		}
+	}
+
+	cardsNotInPlay += ( players[playerNumber].checkHandForMatches() * 4 ); //finds matches and increments cardsNotInPlay
+	players[playerNumber].sortHand();
 }
 
 void Game::winner()
@@ -242,11 +321,12 @@ void Game::winner()
 		else if ( players[i].get_numMatches() == max )
 			winner.push_back( i + 1 );
 	}
+
+	gotoxy( winnersX, winnersY );
 	std::cout << "Winner(s): ";
-	for ( unsigned i = 0; i < winner.size(); i++ )
-	{
-		std::cout << winner.back() << ", ";
-		winner.pop_back();
-	}
+	std::cout << "Player " << winner[0];
+	for ( unsigned i = 1; i < winner.size(); i++ )
+		std::cout << ", Player " << winner[i];
 	std::cout << std::endl;
+	gotoxy( winnersX - 6, winnersY + 1 );
 }

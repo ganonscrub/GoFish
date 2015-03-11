@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player()
+Player::Player( bool isAI ) : AIPlayer( isAI )
 {
 }
 
@@ -96,6 +96,19 @@ int Player::checkHandForMatches()
 		}
 	}
 	return matchPile.size() - initialNumberOfMatches;
+}
+
+Card Player::cardAt( unsigned index ) const
+{
+	if ( index >= 0 && index < hand.size() )
+		return hand[index];
+	else
+		return Card( static_cast<CARD_RANK>(-1), static_cast<CARD_SUIT>(-1) );
+}
+
+bool Player::isAI() const
+{
+	return AIPlayer;
 }
 
 bool Player::handSorted() const
