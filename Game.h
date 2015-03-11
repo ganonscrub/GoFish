@@ -47,7 +47,7 @@ private:
 	void guess( unsigned playerNumber );
 	void winner();
 
-	const unsigned numPlayers;
+	unsigned numPlayers;
 	const unsigned initialHandSize;
 	unsigned cardsNotInPlay;
 };

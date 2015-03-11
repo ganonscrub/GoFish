@@ -12,10 +12,11 @@ int main( int argc, char* argv )
 
 	int numOfPlayers = 0;
 
+	gotoxy( 5, 3 );
 	std::cout << "Enter the number of players( 2-5 ): ";
 	std::cin >> numOfPlayers;
 
-	system("cls");
+	system( "cls" );
 
 	Game game( numOfPlayers );
 

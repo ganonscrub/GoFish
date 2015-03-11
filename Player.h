@@ -20,7 +20,7 @@ public:
 
 	unsigned numCards() const;
 
-	bool playerHasCard( Card test ) const;
+	bool playerHasCardOfRank( CARD_RANK rank ) const;
 	int checkHandForMatches();
 
 	void addCard( Card in );

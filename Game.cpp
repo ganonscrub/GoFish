@@ -5,12 +5,12 @@ Game::Game( unsigned numPlayers ) : numPlayers( numPlayers ), initialHandSize( 7
 	if ( numPlayers < 2 )
 	{
 		std::cout << "Too few players, setting it to 2\n\n\n\n";
-		numPlayers = 2;
+		Game::numPlayers = 2;
 	}
 	else if ( numPlayers > 5 )
 	{
 		std::cout << "Too many players, setting it to 5\n\n\n\n";
-		numPlayers = 5;
+		Game::numPlayers = 2;
 	}
 
 	deck.shuffleDeck();
@@ -34,14 +34,19 @@ void Game::run()
 {
 	while ( cardsNotInPlay < 52 )
 	{
-		gotoxy( playerLabelX, playerLabelY );
-		if (players[guesser].numCards() == 0 && deck.deckSize() <= 0){ //skips player if no more cards in hand & no cards in deck
-			if (guesser == players.size() - 1)
+		// skip player if no more cards in hand & no cards in deck
+		if ( players[guesser].numCards() == 0 && deck.deckSize() <= 0 )
+		{
+			if ( guesser == players.size() - 1 )
 				guesser = 0;
 			else
 				guesser++;
 		}
+
+		gotoxy( playerLabelX, playerLabelY );
 		std::cout << "Currently guessing: Player " << guesser + 1;
+
+		// if current guesser has no cards, give guesser a card from the deck
 		if ( players[guesser].numCards() == 0 )
 		{
 			for ( unsigned i = 0; i < initialHandSize && deck.deckSize() > 0; i++ )
@@ -111,6 +116,7 @@ void Game::guess( unsigned playerGuessing )
 		std::cin >> guessRank;
 		std::cin.clear();
 		std::cin.ignore( 1000, '\n' );
+
 		switch ( guessRank )
 		{
 		case RANK_ACE:
@@ -141,7 +147,11 @@ void Game::guess( unsigned playerGuessing )
 			break;
 		default:
 			guessRank -= '0';
+			std::cout << "guessRank: " << (int)guessRank << "\n";
 		}
+
+		if ( !players[guesser].playerHasCardOfRank( static_cast<CARD_RANK>(guessRank) ) )
+			guessRank = 0;
 	}
 
 	std::vector< Card > temp = players[ targetPlayer - 1 ].cardsOfRank( static_cast<CARD_RANK>( guessRank ) );

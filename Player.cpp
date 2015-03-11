@@ -42,11 +42,11 @@ unsigned Player::numCards() const
 	return hand.size();
 }
 
-bool Player::playerHasCard( Card test )  const
+bool Player::playerHasCardOfRank( CARD_RANK rank ) const
 {
 	for ( unsigned i = 0; i < hand.size(); i++ )
 	{
-		if ( hand[i] == test )
+		if ( hand[i].get_rank() == rank )
 			return true;
 	}
 	return false;
