@@ -6,6 +6,9 @@
 #include "Player.h"
 #include "Deck.h"
 
+const unsigned KEY_ENTER = 13;
+const unsigned KEY_LEFT = 75;
+const unsigned KEY_RIGHT = 77;
 const unsigned playerLabelX = 5; // text displaying current player number
 const unsigned playerLabelY = 3;
 
@@ -33,7 +36,7 @@ const unsigned winnersY = 20;
 class Game
 {
 public:
-	Game( unsigned numPlayers, bool hasAI = false );
+	Game(unsigned numOfRealPlayers, unsigned numOfAIPlayers, unsigned numPlayers, bool isAIGame);
 
 	void run();
 
@@ -41,22 +44,23 @@ private:
 	Deck deck;
 	std::vector< Player > players;
 
-	const bool hasAI;
+	const bool isAIGame;
 
 	unsigned guesser;
 
 	void dealCards();
 	std::vector< Player >& getPlayers();
 	
-	void printPlayerHands(); //Used to print all player hands for testing
 	void printPlayerMatchPile(unsigned playerNumber ) const;
 	void printPlayerHand( unsigned playerNumber ) const;
 
 	void guess( unsigned playerNumber );
 	void computerGuess( unsigned playerNumber );
+	void checkForMatches(unsigned guesser, unsigned targetPlayer, CARD_RANK guessedRank, unsigned playerGuessing);
 	void winner();
-
 	unsigned numPlayers;
+	unsigned numOfRealPlayers;
+	unsigned numOfAIPlayers;
 	const unsigned initialHandSize;
 	unsigned cardsNotInPlay;
 };
