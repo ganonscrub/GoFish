@@ -8,7 +8,7 @@ int Player::get_numMatches() const
 {
 	return matchPile.size();
 }
-int Player::get_rankAt(int index) const
+CARD_RANK Player::get_rankAt(int index) const
 {
 	return hand[index].get_rank();
 }
@@ -37,7 +37,7 @@ void Player::printMatchPile( unsigned posX, unsigned posY ) const
 		matchPile[i][0].display_card( i * WIDTH + posX - ( i * 10 ), posY );
 }
 
-unsigned Player::numCards() const
+int Player::numCards() const
 {
 	return hand.size();
 }
@@ -80,9 +80,9 @@ std::vector< Card > Player::cardsOfRank( CARD_RANK targetRank )
 int Player::checkHandForMatches()
 {	
 	int initialNumberOfMatches = matchPile.size();
-	for ( unsigned i = 0; i < numCards(); i++ )
+	for ( int i = 0; i < numCards(); i++ )
 	{
-		std::vector< Card > temp = cardsOfRank( static_cast<CARD_RANK>( get_rankAt( i ) ) );
+		std::vector< Card > temp = cardsOfRank( get_rankAt( i ) );
 		if ( temp.size() == 4 )
 		{
 			addMatches( temp );

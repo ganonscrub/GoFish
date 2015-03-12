@@ -10,7 +10,7 @@ public:
 	Player( bool isAI = false );
 
 	int get_numMatches() const;
-	int get_rankAt( int index ) const;
+	CARD_RANK get_rankAt( int index ) const;
 
 	void printHand() const;
 	void printHand( unsigned posX, unsigned posY ) const;
@@ -18,7 +18,7 @@ public:
 	void printMatchPile() const;
 	void printMatchPile( unsigned posX, unsigned posY ) const;
 
-	unsigned numCards() const;
+	int numCards() const;
 
 	bool playerHasCardOfRank( CARD_RANK rank ) const;
 	int checkHandForMatches();

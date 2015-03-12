@@ -1,36 +1,41 @@
- #include "Game.h"
+#include "Game.h"
+#include <conio.h>
 
-Game::Game( unsigned numPlayers, bool hasAI ) : numPlayers( numPlayers ), hasAI( hasAI ), initialHandSize( 7 ), guesser( 0 ), cardsNotInPlay( 0 )
+Game::Game(unsigned numOfRealPlayers, unsigned numOfAIPlayers, unsigned numPlayers, bool isAIGame) 
+	: numOfRealPlayers(numOfRealPlayers), numOfAIPlayers(numOfAIPlayers), numPlayers(numPlayers), isAIGame(isAIGame), initialHandSize(7), guesser(0), cardsNotInPlay(0)
 {
-	if ( numPlayers < 2 )
+	if ( numPlayers < 2)
 	{
 		std::cout << "Too few players, setting it to 2\n\n\n\n";
-		Game::numPlayers = 2;
+		Game::numOfRealPlayers = 2;
+		Game::numOfAIPlayers = 0;
 	}
-	else if ( numPlayers > 5 )
+	else if ( numPlayers > 5)
 	{
 		std::cout << "Too many players, setting it to 5\n\n\n\n";
-		Game::numPlayers = 5;
+		Game::numOfRealPlayers = 5;
+		Game::numOfAIPlayers = 0;
 	}
+	Game::numPlayers = Game::numOfAIPlayers + Game::numOfRealPlayers;
 
 	deck.shuffleDeck();
-
-	if ( hasAI )
+	for (unsigned i = 0; i < numPlayers;)
 	{
-		for ( unsigned i = 0; i < numPlayers; i++ )
+		unsigned j = 0; unsigned k = 0;
+		if (j < numOfRealPlayers)
 		{
-			if ( i == 0 )
-				players.push_back( Player() );
-			else
-				players.push_back( Player( true ) );
-		}
-	}
-	else
-	{
-		for ( unsigned i = 0; i < numPlayers; i++ )
 			players.push_back( Player() );
-	}
+			j++;
+			i++;
+		}
+		if (k < numOfAIPlayers)
+		{
+			players.push_back( Player(true) );
+			k++;
+			i++;
+		}
 
+	}
 	dealCards();
 }
 void Game::dealCards()
@@ -118,15 +123,6 @@ void Game::run()
 	winner();
 }
 
-void Game::printPlayerHands()
-{
-	for ( unsigned i = 0; i < numPlayers; i++ )
-	{
-		std::cout << "Player " << i + 1 << ": ";
-		players[i].printHand();
-		std::cout << "\n";
-	}
-}
 
 void Game::printPlayerMatchPile( unsigned playerNumber ) const
 {
@@ -141,7 +137,6 @@ void Game::printPlayerHand( unsigned playerNumber ) const
 void Game::guess( unsigned playerGuessing )
 {
 	unsigned targetPlayer = -1;
-	char guessRank = 0;
 	while ( targetPlayer < 1 || targetPlayer > numPlayers || targetPlayer - 1 == playerGuessing )
 	{
 		gotoxy( targetPlayerX, targetPlayerY );
@@ -151,158 +146,55 @@ void Game::guess( unsigned playerGuessing )
 		std::cin.ignore( 1000, '\n' );
 	}
 
-	while ( guessRank < RANK_ACE || guessRank > RANK_KING )
-	{
+	
 		gotoxy( guessRankX, guessRankY );
 
-		std::cout << "Guess rank: ";
-		gotoxy( guessRankX + 12, guessRankY );
-		std::cout << "   ";
-		gotoxy( guessRankX + 12, guessRankY );
+		std::cout << "Select a card by using the arrow keys ";
 
-		std::cin >> guessRank;
-		std::cin.clear();
-		std::cin.ignore( 1000, '\n' );
-
-		switch ( guessRank )
+		int c = 0; int indexOfCardSelected = 0;
+		gotoxy(guessRankX, guessRankY + 1);
+		std::cout << "Index of selected card: " << indexOfCardSelected;
+		while ((c = _getch()) != KEY_ENTER)
 		{
-		case RANK_ACE:
-		case '1':
-		case 'a':
-		case 'A':
-			guessRank = static_cast<int>(RANK_ACE);
-			break;
-		case RANK_TEN:
-		case 't':
-		case 'T':
-			guessRank = static_cast<int>(RANK_TEN);
-			break;
-		case RANK_JACK:
-		case 'j':
-		case 'J':
-			guessRank = static_cast<int>(RANK_JACK);
-			break;
-		case RANK_QUEEN:
-		case 'q':
-		case 'Q':
-			guessRank = static_cast<int>(RANK_QUEEN);
-			break;
-		case RANK_KING:
-		case 'k':
-		case 'K':
-			guessRank = static_cast<int>(RANK_KING);
-			break;
-		default:
-			if ( guessRank >= '1' && guessRank <= '9' )
-				guessRank -= '0';
+			if (c == 0 || c == 224)
+				c = _getch();
+			switch (c)
+			{
+			case KEY_LEFT:
+				indexOfCardSelected--;
+				if (indexOfCardSelected < 0)
+					indexOfCardSelected = players[playerGuessing].numCards() - 1;
+				break;
+			case KEY_RIGHT:
+				indexOfCardSelected++;
+				if (indexOfCardSelected >= players[playerGuessing].numCards())
+					indexOfCardSelected = 0;
+				break;
+			default:
+				break;
+			}
+			gotoxy(guessRankX, guessRankY + 1);
+			std::cout << "Index of selected card: " << indexOfCardSelected;
+			c = 0;
 		}
 
-		if ( !players[playerGuessing].playerHasCardOfRank( static_cast<CARD_RANK>(guessRank) ) )
-		{
-			gotoxy( guessRankX, guessRankY + 1 );
-			std::cout << "No card of that rank in your hand, cheater!\n";
-			guessRank = 0;
-		}
-	}
+	CARD_RANK guessedRank = static_cast<CARD_RANK>(players[playerGuessing].get_rankAt(indexOfCardSelected));
+	checkForMatches(guesser, targetPlayer, guessedRank, playerGuessing);
 
-	std::vector< Card > temp = players[ targetPlayer - 1 ].cardsOfRank( static_cast<CARD_RANK>( guessRank ) );
-	if ( temp.size() > 0 ) // if the target player has a card/cards of that rank
-	{
-		players[ targetPlayer - 1 ].sortHand(); // sort hand of player who just lost cards
-
-		gotoxy( acquiredCardX, acquiredCardY - 1 );
-		std::cout << "Acquired card(s)!";
-		for ( unsigned i = 0; i < temp.size(); i++ )
-			temp[i].display_card( acquiredCardX + i + ( i * 2 ), acquiredCardY );
-
-		std::cout << "\n";
-		for ( unsigned i = 0; i < temp.size(); i++ )
-			players[playerGuessing].addCard( temp[ i ] );
-
-		guesser--;
-
-		gotoxy( 0, 35 );
-	}
-	else
-	{
-		gotoxy( acquiredCardX - 10, acquiredCardY - 2 );
-		std::cout << "Player " << targetPlayer << " had no cards of that rank.";
-
-		if ( deck.deckSize() > 0 )
-		{
-			gotoxy( acquiredCardX - 5, acquiredCardY - 1 );
-			std::cout << "Take one from the pile:";
-			Card tempCard = deck.removeCard();
-
-			if ( tempCard.get_rank() == static_cast<CARD_RANK> (guessRank) )
-				guesser--;
-
-			players[playerGuessing].addCard( tempCard );
-			tempCard.display_card( acquiredCardX, acquiredCardY );
-		}
-		else
-		{
-			gotoxy( acquiredCardX - 10, acquiredCardY - 1 );
-			std::cout << "No more cards to draw, continuing...";
-		}
-	}
-
-	cardsNotInPlay += ( players[playerGuessing].checkHandForMatches() * 4 ); //finds matches and increments cardsNotInPlay
-	players[playerGuessing].sortHand();
+	
 }
 
 void Game::computerGuess( unsigned playerNumber )
 {
 	unsigned randPlayer = -1;
-	while ( randPlayer < 0 || randPlayer > numPlayers - 1 || randPlayer == playerNumber )
-		randPlayer = rand() % numPlayers;
+	while (randPlayer < 1 || randPlayer > numPlayers || randPlayer == playerNumber)
+		randPlayer = rand() % numPlayers + 1;
+
 
 	Card randCard = players[playerNumber].cardAt( rand() % players[playerNumber].numCards() );
 	CARD_RANK randRank = randCard.get_rank();
 
-	std::vector< Card > temp = players[randPlayer].cardsOfRank( randRank );
-	if ( temp.size() > 0 )
-	{
-		players[randPlayer].sortHand(); // sort hand of player who just lost cards
-
-		gotoxy( acquiredCardX, acquiredCardY - 1 );
-		std::cout << "Acquired card(s)!";
-		for ( unsigned i = 0; i < temp.size(); i++ )
-			temp[i].display_card( acquiredCardX + i + ( i * 2 ), acquiredCardY );
-
-		std::cout << "\n";
-		for ( unsigned i = 0; i < temp.size(); i++ )
-			players[playerNumber].addCard( temp[ i ] );
-
-		guesser--;
-
-		gotoxy( 0, 35 );
-	}
-	else
-	{
-		gotoxy( acquiredCardX - 10, acquiredCardY - 2 );
-		std::cout << "Player " << randPlayer + 1 << " had no cards of that rank.";
-
-		if ( deck.deckSize() > 0 )
-		{
-			gotoxy( acquiredCardX - 5, acquiredCardY - 1 );
-			std::cout << "Took from the pile";
-			Card tempCard = deck.removeCard();
-
-			if ( tempCard.get_rank() == static_cast<CARD_RANK> (randRank) )
-				guesser--;
-
-			players[playerNumber].addCard( tempCard );
-		}
-		else
-		{
-			gotoxy( acquiredCardX - 10, acquiredCardY - 1 );
-			std::cout << "No more cards to draw, continuing...";
-		}
-	}
-
-	cardsNotInPlay += ( players[playerNumber].checkHandForMatches() * 4 ); //finds matches and increments cardsNotInPlay
-	players[playerNumber].sortHand();
+	checkForMatches(guesser, randPlayer, randRank, playerNumber);
 }
 
 void Game::winner()
@@ -328,4 +220,51 @@ void Game::winner()
 		std::cout << ", Player " << winner[i];
 	std::cout << std::endl;
 	gotoxy( winnersX - 6, winnersY + 1 );
+}
+void Game::checkForMatches(unsigned guesser, unsigned targetPlayer, CARD_RANK guessedRank, unsigned playerGuessing)
+{
+	std::vector< Card > temp = players[targetPlayer - 1].cardsOfRank(guessedRank);
+	if (temp.size() > 0) // if the target player has a card/cards of that rank
+	{
+		players[targetPlayer - 1].sortHand(); // sort hand of player who just lost cards
+
+		gotoxy(acquiredCardX, acquiredCardY - 1);
+		std::cout << "Acquired card(s)!";
+		for (unsigned i = 0; i < temp.size(); i++)
+			temp[i].display_card(acquiredCardX + i + (i * 2), acquiredCardY);
+
+		std::cout << "\n";
+		for (unsigned i = 0; i < temp.size(); i++)
+			players[playerGuessing].addCard(temp[i]);
+
+		guesser--;
+
+		gotoxy(0, 35);
+	}
+	else
+	{
+		gotoxy(acquiredCardX - 10, acquiredCardY - 2);
+		std::cout << "Player " << targetPlayer << " had no cards of that rank.";
+
+		if (deck.deckSize() > 0)
+		{
+			gotoxy(acquiredCardX - 5, acquiredCardY - 1);
+			std::cout << "Take one from the pile:";
+			Card tempCard = deck.removeCard();
+
+			if (tempCard.get_rank() == guessedRank)
+				guesser--;
+
+			players[playerGuessing].addCard(tempCard);
+			tempCard.display_card(acquiredCardX, acquiredCardY);
+		}
+		else
+		{
+			gotoxy(acquiredCardX - 10, acquiredCardY - 1);
+			std::cout << "No more cards to draw, continuing...";
+		}
+	}
+
+	cardsNotInPlay += (players[playerGuessing].checkHandForMatches() * 4); //finds matches and increments cardsNotInPlay
+	players[playerGuessing].sortHand();
 }

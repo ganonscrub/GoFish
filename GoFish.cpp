@@ -11,7 +11,9 @@ int main( int argc, char* argv )
 	system( "mode 120, 42" );
 
 	int numOfPlayers = 0;
-	char aiGame = 'n';
+	int numOfAIPlayers = 0;
+	char yesNoResponse = 'n';
+	bool isAIGame = false;
 
 	gotoxy( 5, 3 );
 	std::cout << "Enter the number of players( 2-5 ): ";
@@ -19,20 +21,17 @@ int main( int argc, char* argv )
 
 	gotoxy( 5, 4 );
 	std::cout << "Would you like to play against computer players? (y/n): ";
-	std::cin >> aiGame;
+	std::cin >> yesNoResponse;
+	if (yesNoResponse == 'y'){
+		isAIGame = true;
+		gotoxy(5, 5);
+		std::cout << "How many of the players are AI players? (0-" << numOfPlayers << ")? ";
+		std::cin >> numOfAIPlayers;
+	}
 
 	system( "cls" );
-
-	if ( aiGame == 'y' )
-	{
-		Game game( numOfPlayers, true );
-		game.run();
-	}
-	else
-	{
-		Game game( numOfPlayers, false );
-		game.run();
-	}
+	Game game(numOfPlayers - numOfAIPlayers,numOfAIPlayers, numOfPlayers, isAIGame);
+	game.run();
 
 	return 0;
 }
