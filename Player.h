@@ -14,6 +14,10 @@ public:
 
 	void printHand() const;
 	void printHand( unsigned posX, unsigned posY ) const;
+	void printHandWithSelection( unsigned posX, unsigned posY, unsigned selectedIndex ) const;
+
+	void printHandNew( unsigned posX, unsigned posY ) const;
+	void printHandNewWithSelection( unsigned posX, unsigned posY, unsigned selectedIndex ) const;
 
 	void printMatchPile() const;
 	void printMatchPile( unsigned posX, unsigned posY ) const;
@@ -40,6 +44,11 @@ private:
 
 	bool handSorted() const;
 	const bool AIPlayer;
+
+	void setConNorm() const;
+	void setConRed() const;
+	void setConBlack() const;
+	void setConBySuit( CARD_SUIT inSuit ) const;
 };
 
 #endif

@@ -22,7 +22,8 @@ int main( int argc, char* argv )
 	gotoxy( 5, 4 );
 	std::cout << "Would you like to play against computer players? (y/n): ";
 	std::cin >> yesNoResponse;
-	if (yesNoResponse == 'y'){
+	if (yesNoResponse == 'y')
+	{
 		isAIGame = true;
 		gotoxy(5, 5);
 		std::cout << "How many of the players are AI players? (0-" << numOfPlayers << ")? ";

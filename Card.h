@@ -2,6 +2,16 @@
 #define CARD_H
 
 #include <iostream>
+#include <vector>
+
+const char UPPER_LEFT = (const char)218;
+const char STACKED_UPPER_LEFT = (const char)195;
+const char STACKED_UPPER_RIGHT = (const char)180;
+const char UPPER_RIGHT = (const char)191;
+const char HORIZONTAL = (const char)196;
+const char VERTICAL = (const char)179;
+const char BOTTOM_LEFT = (const char)192;
+const char BOTTOM_RIGHT = (const char)217;
 
 enum CARD_RANK 
 { 
@@ -30,8 +40,8 @@ enum CARD_SUIT
 
 void gotoxy(int x, int y);
 
-const int WIDTH = 12;
-const int HEIGHT = 12;
+const int CARD_WIDTH = 12;
+const int CARD_HEIGHT = 12;
 
 class Card
 {
@@ -39,10 +49,13 @@ public:
 	Card();
 	Card( CARD_RANK rank, CARD_SUIT suit );
 	void display_card( int x, int y, bool stacked = false, bool face_up = true ) const;
+	char rankToChar( CARD_RANK rank ) const;
+	void display_card_efficient( int x, int y ) const;
 
 	//accessor functions
 	CARD_RANK get_rank() const;
 	CARD_SUIT get_suit() const;
+	char rank_char() const { return rankToChar( cardRank ); }
 
 	//mutator functions
 	void set_rank( CARD_RANK newRank );
@@ -55,8 +68,8 @@ public:
 
 private:
 	void display_stamp(int x, int y) const;
-	CARD_RANK rank;
-	CARD_SUIT suit;
+	CARD_RANK cardRank;
+	CARD_SUIT cardSuit;
 };
 
 #endif

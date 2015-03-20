@@ -5,38 +5,40 @@
 #include <vector>
 #include "Player.h"
 #include "Deck.h"
+#include <Windows.h>
 
 const unsigned KEY_ENTER = 13;
 const unsigned KEY_LEFT = 75;
 const unsigned KEY_RIGHT = 77;
-const unsigned playerLabelX = 5; // text displaying current player number
-const unsigned playerLabelY = 3;
 
-const unsigned playerHandX = playerLabelX; // where to start drawing current player's hand
-const unsigned playerHandY = playerLabelY + 3;
+const unsigned positionPlayerLabelX = 5; // text displaying current player number
+const unsigned positionPlayerLabelY = 3;
 
-const unsigned playerMatchX = playerLabelX; // where to start drawing current player's matches
-const unsigned playerMatchY = playerLabelY + 18;
+const unsigned positionPlayerHandX = positionPlayerLabelX; // where to start drawing current player's hand
+const unsigned positionPlayerHandY = positionPlayerLabelY + 5;
 
-const unsigned acquiredCardX = playerMatchX + 70; // where to start drawing cards drawn from deck/taken from players
-const unsigned acquiredCardY = playerMatchY;
+const unsigned positionPlayerMatchX = positionPlayerHandX; // where to start drawing current player's matches
+const unsigned positionPlayerMatchY = positionPlayerHandY + 15;
 
-const unsigned targetPlayerX = playerMatchX; // where to start drawing "Target player: " prompt
-const unsigned targetPlayerY = playerMatchY + 17;
+const unsigned positionAcquiredCardX = positionPlayerMatchX + 70; // where to start drawing cards drawn from deck/taken from players
+const unsigned positionAcquiredCardY = positionPlayerMatchY;
 
-const unsigned guessRankX = targetPlayerX; // where to start drawing "Guess rank: " prompt
-const unsigned guessRankY = targetPlayerY + 1;
+const unsigned positionTargetPlayerX = positionPlayerMatchX; // where to start drawing "Target player: " prompt
+const unsigned positionTargetPlayerY = positionPlayerMatchY + 15;
 
-const unsigned cardsLeftInPlayX = 98;
-const unsigned cardsLeftInPlayY = playerLabelY;
+const unsigned positionGuessRankX = positionTargetPlayerX; // where to start drawing "Guess rank: " prompt
+const unsigned positionGuessRankY = positionTargetPlayerY + 1;
 
-const unsigned winnersX = 50;
-const unsigned winnersY = 20;
+const unsigned positionCardsLeftInPlayX = 98;
+const unsigned positionCardsLeftInPlayY = positionPlayerLabelY;
+
+const unsigned positionWinnersX = 50;
+const unsigned positionWinnersY = 20;
 
 class Game
 {
 public:
-	Game(unsigned numOfRealPlayers, unsigned numOfAIPlayers, unsigned numPlayers, bool isAIGame);
+	Game( unsigned numOfRealPlayers, unsigned numOfAIPlayers, unsigned numPlayers, bool isAIGame );
 
 	void run();
 
@@ -53,10 +55,11 @@ private:
 	
 	void printPlayerMatchPile(unsigned playerNumber ) const;
 	void printPlayerHand( unsigned playerNumber ) const;
+	void printGameInfo() const;
 
 	void guess( unsigned playerNumber );
 	void computerGuess( unsigned playerNumber );
-	void checkForMatches(unsigned guesser, unsigned targetPlayer, CARD_RANK guessedRank, unsigned playerGuessing);
+	void checkForMatches( unsigned guesser, unsigned targetPlayer, CARD_RANK guessedRank, unsigned playerGuessing );
 	void winner();
 	unsigned numPlayers;
 	unsigned numOfRealPlayers;
