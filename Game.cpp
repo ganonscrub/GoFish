@@ -211,7 +211,7 @@ void Game::guess( unsigned playerGuessing )
 	}
 
 	CARD_RANK guessedRank = static_cast<CARD_RANK>( players[playerGuessing].get_rankAt( indexOfCardSelected ) );
-	checkForMatches( guesser, targetPlayer, guessedRank, playerGuessing );
+	checkForMatches(targetPlayer, guessedRank, playerGuessing );
 }
 
 void Game::computerGuess( unsigned playerNumber )
@@ -223,7 +223,7 @@ void Game::computerGuess( unsigned playerNumber )
 	Card randCard = players[playerNumber].cardAt( rand() % players[playerNumber].numCards() );
 	CARD_RANK randRank = randCard.get_rank();
 
-	checkForMatches( guesser, randPlayer, randRank, playerNumber );
+	checkForMatches( randPlayer, randRank, playerNumber );
 }
 
 void Game::winner()
@@ -250,7 +250,7 @@ void Game::winner()
 	std::cout << std::endl;
 	gotoxy( positionWinnersX - 6, positionWinnersY + 1 );
 }
-void Game::checkForMatches( unsigned guesser, unsigned targetPlayer, CARD_RANK guessedRank, unsigned playerGuessing )
+void Game::checkForMatches( unsigned targetPlayer, CARD_RANK guessedRank, unsigned playerGuessing )
 {
 	std::vector< Card > temp = players[targetPlayer - 1].cardsOfRank( guessedRank );
 	if ( temp.size() > 0 ) // if the target player has a card/cards of that rank
