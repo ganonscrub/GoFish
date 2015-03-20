@@ -59,7 +59,7 @@ private:
 
 	void guess( unsigned playerNumber );
 	void computerGuess( unsigned playerNumber );
-	void checkForMatches( unsigned guesser, unsigned targetPlayer, CARD_RANK guessedRank, unsigned playerGuessing );
+	void checkForMatches( unsigned targetPlayer, CARD_RANK guessedRank, unsigned playerGuessing );
 	void winner();
 	unsigned numPlayers;
 	unsigned numOfRealPlayers;
