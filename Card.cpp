@@ -35,7 +35,7 @@ CARD_SUIT Card::get_suit() const
 	return cardSuit;
 }
 
-void Card::set_rank( CARD_RANK newRank )
+/*void Card::set_rank( CARD_RANK newRank )
 {
 	cardRank = newRank;
 }
@@ -43,7 +43,7 @@ void Card::set_rank( CARD_RANK newRank )
 void Card::set_suit( CARD_SUIT newSuit )
 {
 	cardSuit = newSuit;
-}
+}*/
 
 bool Card::operator==( const Card& right ) const
 {

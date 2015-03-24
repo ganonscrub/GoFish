@@ -19,9 +19,9 @@ Game::Game(unsigned numOfRealPlayers, unsigned numOfAIPlayers, unsigned numPlaye
 	Game::numPlayers = Game::numOfAIPlayers + Game::numOfRealPlayers;
 
 	deck.shuffleDeck();
+	unsigned j = 0; unsigned k = 0;
 	for (unsigned i = 0; i < numPlayers;)
 	{
-		unsigned j = 0; unsigned k = 0;
 		if (j < numOfRealPlayers)
 		{
 			players.push_back( Player() );
@@ -43,7 +43,7 @@ void Game::dealCards()
 	for (unsigned i = 0; i < numPlayers; i++)
 	{
 		for (unsigned j = 0; j < initialHandSize; j++)
-			players[i].addCard( deck.removeCard() );
+			players[i].addCardToHand( deck.removeCard() );
 		players[i].sortHand(); // sort after adding the cards, should be a better way to optimize
 	}
 }
@@ -87,7 +87,7 @@ void Game::run()
 		{
 			for ( unsigned i = 0; i < initialHandSize && deck.deckSize() > 0; i++ )
 			{
-				players[guesser].addCard( deck.removeCard() );
+				players[guesser].addCardToHand( deck.removeCard() );
 			}
 			players[guesser].sortHand();
 		}
@@ -264,7 +264,7 @@ void Game::checkForMatches( unsigned targetPlayer, CARD_RANK guessedRank, unsign
 
 		std::cout << "\n";
 		for ( unsigned i = 0; i < temp.size(); i++ )
-			players[playerGuessing].addCard( temp[i] );
+			players[playerGuessing].addCardToHand( temp[i] );
 
 		guesser--;
 
@@ -284,7 +284,7 @@ void Game::checkForMatches( unsigned targetPlayer, CARD_RANK guessedRank, unsign
 			if ( tempCard.get_rank() == guessedRank )
 				guesser--;
 
-			players[playerGuessing].addCard( tempCard );
+			players[playerGuessing].addCardToHand( tempCard );
 			tempCard.display_card( positionAcquiredCardX, positionAcquiredCardY );
 		}
 		else
