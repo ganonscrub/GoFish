@@ -12,23 +12,23 @@ public:
 	int get_numMatches() const;
 	CARD_RANK get_rankAt( int index ) const;
 
-	void printHand() const;
+	//void printHand() const; Never called
 	void printHand( unsigned posX, unsigned posY ) const;
 	void printHandWithSelection( unsigned posX, unsigned posY, unsigned selectedIndex ) const;
 
-	void printHandNew( unsigned posX, unsigned posY ) const;
+	//void printHandNew( unsigned posX, unsigned posY ) const;  Never called
 	void printHandNewWithSelection( unsigned posX, unsigned posY, unsigned selectedIndex ) const;
 
-	void printMatchPile() const;
+	//void printMatchPile() const; Never called
 	void printMatchPile( unsigned posX, unsigned posY ) const;
 
 	int numCards() const;
 
-	bool playerHasCardOfRank( CARD_RANK rank ) const;
+	//bool playerHasCardOfRank( CARD_RANK rank ) const; Never called
 	int checkHandForMatches();
 
-	void addCard( Card in );
-	void addMatches( std::vector <Card> in );
+	void addCardToHand( Card in );
+	void addToMatchPile( std::vector <Card> in );
 
 	void sortHand();
 

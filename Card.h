@@ -58,8 +58,8 @@ public:
 	char rank_char() const { return rankToChar( cardRank ); }
 
 	//mutator functions
-	void set_rank( CARD_RANK newRank );
-	void set_suit( CARD_SUIT newSuit );
+	//void set_rank( CARD_RANK newRank ); never called
+	//void set_suit( CARD_SUIT newSuit ); never called
 
 	//operators
 	bool operator==( const Card& right ) const;

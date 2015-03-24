@@ -14,11 +14,11 @@ CARD_RANK Player::get_rankAt(int index) const
 	return hand[index].get_rank();
 }
 
-void Player::printHand() const
+/*void Player::printHand() const
 {
 	for ( unsigned i = 0; i < hand.size(); i++ )
 		hand[i].display_card( i + ( i * 2 ), 3 );
-}
+}*/
 
 void Player::printHand( unsigned posX, unsigned posY ) const
 {
@@ -42,7 +42,7 @@ void Player::printHandWithSelection( unsigned posX, unsigned posY, unsigned sele
 	}
 }
 
-void Player::printHandNew( unsigned posX, unsigned posY ) const
+/*void Player::printHandNew( unsigned posX, unsigned posY ) const
 {
 	if ( hand.size() == 0 )
 		return;
@@ -52,9 +52,9 @@ void Player::printHandNew( unsigned posX, unsigned posY ) const
 	}
 	else
 	{
-		for ( int i = 0; i < hand.size(); i++ )
+		for ( unsigned int i = 0; i < hand.size(); i++ )
 		{
-			for ( int j = 0; j < CARD_HEIGHT; j++ )
+			for ( unsigned int j = 0; j < CARD_HEIGHT; j++ )
 			{
 				gotoxy( posX + ( 3 * i ), posY + j );
 				if ( i < hand.size() - 1 )
@@ -125,7 +125,7 @@ void Player::printHandNew( unsigned posX, unsigned posY ) const
 			}
 		}
 	}
-}
+}*/
 
 void Player::printHandNewWithSelection( unsigned posX, unsigned posY, unsigned selectedIndex ) const
 {
@@ -137,9 +137,9 @@ void Player::printHandNewWithSelection( unsigned posX, unsigned posY, unsigned s
 	}
 	else
 	{
-		for ( int i = 0; i < hand.size(); i++ )
+		for ( unsigned int i = 0; i < hand.size(); i++ )
 		{
-			for ( int j = 0; j < CARD_HEIGHT; j++ )
+			for ( unsigned int j = 0; j < CARD_HEIGHT; j++ )
 			{
 				if ( i == selectedIndex )
 					gotoxy( posX + ( 3 * i ), posY + j - 1 );
@@ -152,7 +152,7 @@ void Player::printHandNewWithSelection( unsigned posX, unsigned posY, unsigned s
 					{
 						if ( j > 0 )
 						{
-							for ( int k = 0; k < 3; k++ )
+							for ( unsigned int k = 0; k < 3; k++ )
 							{
 								if ( j == 0 && k % 3 == 0 )
 									std::cout << UPPER_LEFT;
@@ -327,11 +327,11 @@ void Player::printHandNewWithSelection( unsigned posX, unsigned posY, unsigned s
 	}
 }
 
-void Player::printMatchPile() const
+/*void Player::printMatchPile() const
 {
 	for ( unsigned i = 0; i < matchPile.size(); i++ )
 		matchPile[i][0].display_card( i * CARD_WIDTH + 8 - ( i * 10 ), 18 );
-}
+}*/
 
 void Player::printMatchPile( unsigned posX, unsigned posY ) const
 {
@@ -344,7 +344,7 @@ int Player::numCards() const
 	return hand.size();
 }
 
-bool Player::playerHasCardOfRank( CARD_RANK rank ) const
+/*bool Player::playerHasCardOfRank( CARD_RANK rank ) const
 {
 	for ( unsigned i = 0; i < hand.size(); i++ )
 	{
@@ -352,14 +352,14 @@ bool Player::playerHasCardOfRank( CARD_RANK rank ) const
 			return true;
 	}
 	return false;
-}
+}*/
 
-void Player::addCard( Card in )
+void Player::addCardToHand( Card in )
 {
 	hand.push_back( in );
 }
 
-void Player::addMatches( std::vector<Card> in )
+void Player::addToMatchPile( std::vector<Card> in )
 {
 	matchPile.push_back( in );
 }
@@ -387,14 +387,14 @@ int Player::checkHandForMatches()
 		std::vector< Card > temp = cardsOfRank( get_rankAt( i ) );
 		if ( temp.size() == 4 )
 		{
-			addMatches( temp );
+			addToMatchPile( temp );
 			temp.clear();
 			i = -1;			
 		}
 		else
 		{
 			for ( unsigned i = 0; i < temp.size(); i++ )
-				addCard( temp[i] );
+				addCardToHand( temp[i] );
 		}
 	}
 	return matchPile.size() - initialNumberOfMatches;
