@@ -75,13 +75,6 @@ void Game::run()
 		// print the current game state information
 		printGameInfo();
 
-		// if the current person guessing is not AI, print their hand
-		if ( !players[guesser].isAI() )
-		{
-			gotoxy( positionPlayerLabelX, positionPlayerLabelY + 2 );
-			std::cout << "Player " << guesser + 1 << " Hand";
-		}
-
 		// if current guesser has no cards, give guesser a card from the deck
 		if ( players[guesser].numCards() == 0 )
 		{
@@ -97,7 +90,9 @@ void Game::run()
 				computerGuess( guesser );
 			else
 			{
-				printPlayerHand( guesser );
+				gotoxy(positionPlayerLabelX, positionPlayerLabelY + 2);
+				std::cout << "Player " << guesser + 1 << " Hand";
+				players[guesser].printHandWithSelection(positionPlayerHandX, positionPlayerHandY, 0);
 				guess( guesser );
 			}
 		}
@@ -123,11 +118,11 @@ void Game::printPlayerMatchPile( unsigned playerNumber ) const
 	gotoxy( positionGuessRankX, positionGuessRankY + 1 );
 }
 
-void Game::printPlayerHand( unsigned playerNumber ) const
+/*void Game::printPlayerHand( unsigned playerNumber ) const
 {
 	players[playerNumber].printHand( positionPlayerHandX, positionPlayerHandY );
 	gotoxy( positionGuessRankX, positionGuessRankY + 1 );
-}
+}*/
 
 void Game::printGameInfo() const
 {
@@ -167,7 +162,6 @@ void Game::guess( unsigned playerGuessing )
 	bool stop = false;
 	bool keyPressed = false;
 
-	players[playerGuessing].printHandWithSelection( positionPlayerHandX, positionPlayerHandY, indexOfCardSelected );
 
 	while ( !stop )
 	{
@@ -200,13 +194,11 @@ void Game::guess( unsigned playerGuessing )
 		{
 			exit( 1 );
 		}
-
 		if ( keyPressed )
 		{
 			players[playerGuessing].printHandNewWithSelection( positionPlayerHandX, positionPlayerHandY, indexOfCardSelected );
 			gotoxy( positionGuessRankX + strlen( "Navigate with the arrow keys and confirm with the space bar" ), positionGuessRankY );
 		}
-
 		Sleep( 150 );
 	}
 
