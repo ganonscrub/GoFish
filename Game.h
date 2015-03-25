@@ -54,7 +54,7 @@ private:
 	std::vector< Player >& getPlayers();
 	
 	void printPlayerMatchPile(unsigned playerNumber ) const;
-	void printPlayerHand( unsigned playerNumber ) const;
+	//void printPlayerHand( unsigned playerNumber ) const; function not needed
 	void printGameInfo() const;
 
 	void guess( unsigned playerNumber );
